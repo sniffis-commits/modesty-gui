@@ -1,45 +1,40 @@
-<p align="center">
-  <img src="assets/logo.svg" alt="Modesty" width="110" height="110">
-</p>
-
-<p align="center">
-  <img src="assets/modesty-brand.svg" alt="Modesty — NSFW protection" width="260">
-</p>
+<p align="center"><img src="assets/logo.svg" alt="modesty-gui" width="110" height="110"></p>
 
 # modesty-gui
 
 > Desktop GUI (Tauri)
 
-Cross-platform Tauri desktop app around the scanner: visual dashboard, live rating overlay and `.skp` skip-list generation.
+**Part of the [Modesty toolkit](https://github.com/sniffis-commits/modesty-meta)** — see the
+[big README](https://github.com/sniffis-commits/modesty-meta) for the full picture, the rating scale and all repositories.
+
+## What this is
+
+A cross-platform desktop application around the scanning library: visual dashboard, media scan settings, hit-frame review, floating rating overlay and `.skp` skip-list generation. Scanning stays local unless you enable the optional hosted scan.
+
+## How to
+
+
+```bash
+npm install
+npm run tauri dev          # development
+npm run tauri build        # release binary
+```
+- Configure the model, fps/every-frame, subtitles, decoder and threshold in the UI.
+- Hosted scan is off by default; enabling it uploads the selected media.
+- Requires the Rust toolchain and Tauri system dependencies.
+
 
 ## Layout
 
-| Path | What |
+| Path | Purpose |
 |---|---|
-| `src-tauri/` | source from the monorepo |
 | `src/` | source from the monorepo |
+| `src-tauri/` | source from the monorepo |
 
-## Details
+## More
 
-| | |
-|---|---|
-| Language | Rust / Tauri |
-| License | MIT |
-| Website | [https://modesty.cia.org.il](https://modesty.cia.org.il) |
-| Repository map | [REPO_MAP.md](https://github.com/sniffis-commits/nfsw_scanner/blob/main/docs/REPO_MAP.md) |
-| Split from | private monorepo `sniffis-commits/nfsw_scanner` |
-
-## Quick start
-
-```sh
-See README in the source for build steps.
-```
-
-## About Modesty
-
-Privacy-first NSFW scanner. Local scanning by default; uploads are opt-in.
-These public repos are split from a private monorepo — see the
-[repository map](https://github.com/sniffis-commits/nfsw_scanner/blob/main/docs/REPO_MAP.md) for the full local-to-GitHub naming. Model weights are
-in `modesty-models`; the free domain DB release is in `modesty-db`.
-
-Third-party data/model terms are on the [site's license page](https://modesty.cia.org.il/?p=licenses).
+- Full overview and other repos: [modesty-meta](https://github.com/sniffis-commits/modesty-meta)
+- Website: [https://modesty.cia.org.il](https://modesty.cia.org.il)
+- Model weights: [modesty-models](https://github.com/sniffis-commits/modesty-models)
+- Licence: MIT (see `LICENSE`). Third-party data/model terms are on the
+  [site's licence page](https://modesty.cia.org.il/?p=licenses).

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modesty Scanner - nsfw toolkit</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <script type="module" src="/scripts/app.js"></script>
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <h1>Modesty Scanner <span> - nsfw toolkit</span></h1>
+      <div class="header-actions">
+        <button id="btn-new" class="btn btn-primary">New Project</button>
+        <button id="btn-open" class="btn btn-secondary">Open Project</button>
+        <button id="btn-save" class="btn btn-secondary">Save Project</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <aside class="sidebar">
+        <nav class="nav-tabs" role="tablist">
+          <button role="tab" data-tab="media" class="tab-btn active">Media Input</button>
+          <button role="tab" data-tab="skip" class="tab-btn">Skip Data</button>
+          <button role="tab" data-tab="debug" class="tab-btn">Advanced</button>
+          <button role="tab" data-tab="samples" class="tab-btn">Samples</button>
+        </nav>
+      </aside>
+
+      <div class="content">
+        <!-- Media Input Tab -->
+        <section id="tab-media" class="tab-panel active" role="tabpanel">
+          <div class="card">
+            <h2>Media Source</h2>
+            <div class="form-group">
+              <label for="media-file-path">Video or audio file:</label>
+              <div class="input-row">
+                <input type="text" id="media-file-path" class="input-text" placeholder="Select media file..." value="">
+                <button id="btn-browse-media" class="btn btn-secondary">Browse</button>
+                <input type="file" id="file-input-media" accept="video/*,audio/*,.mp4,.mkv,.avi" style="display:none">
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Scanner Settings</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="model">NSFW model:</label>
+                <select id="model" class="input-select">
+                  <option value="auto">Auto (joint when installed)</option>
+                  <option value="joint">Joint (5 classes)</option>
+                  <option value="binary">Binary (faster)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="fps">Frames per second:</label>
+                <input type="number" id="fps" class="input-number" min="0.1" max="30" step="0.1" value="1">
+              </div>
+              <div class="form-group">
+                <label for="max-frames">Maximum frames:</label>
+                <input type="number" id="max-frames" class="input-number" min="1" max="100000" step="1" value="2000">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="decoder">Decoder:</label>
+                <select id="decoder" class="input-select">
+                  <option value="auto">Auto</option>
+                  <option value="av">PyAV</option>
+                  <option value="ffmpeg">FFmpeg</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="frames-format">Frame format:</label>
+                <select id="frames-format" class="input-select">
+                  <option value="raw">Raw RGB</option>
+                  <option value="png">PNG pipe</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="hwaccel">Hardware decoder:</label>
+                <select id="hwaccel" class="input-select">
+                  <option value="none">Software</option>
+                  <option value="auto">Auto</option>
+                  <option value="cuda">CUDA</option>
+                  <option value="qsv">Intel QSV</option>
+                  <option value="d3d11va">D3D11VA</option>
+                  <option value="vaapi">VAAPI</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="tiles">Sub-frame crops:</label>
+                <select id="tiles" class="input-select">
+                  <option value="off">Off</option>
+                  <option value="2x2">2 × 2</option>
+                  <option value="3x3">3 × 3</option>
+                </select>
+              </div>
+            </div>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" id="every-frame"> Scan every frame (slow)</label>
+              <label class="checkbox-label"><input type="checkbox" id="subtitles" checked> Scan subtitles</label>
+              <label class="checkbox-label"><input type="checkbox" id="face-crop"> Use face crops (slower)</label>
+              <label class="checkbox-label"><input type="checkbox" id="debug-scan"> Include debug details</label>
+            </div>
+          </div>
+
+          <div class="card actions">
+            <button id="btn-start-scan" class="btn btn-primary btn-lg">Start Scan</button>
+            <button id="btn-stop-scan" class="btn btn-danger btn-lg" disabled>Stop Scan</button>
+          </div>
+
+          <div class="card progress-card hidden" id="progress-card">
+            <h2>Scan Progress</h2>
+            <div class="form-group">
+              <label>Progress:</label>
+              <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Status:</label>
+              <div id="progress-status" style="font-family:monospace;font-size:12px;">Ready</div>
+            </div>
+            <div class="form-group">
+              <label>Stats:</label>
+              <div id="progress-stats" style="font-family:monospace;font-size:11px;">-</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skip Data Tab -->
+        <section id="tab-skip" class="tab-panel hidden" role="tabpanel">
+          <div class="card">
+            <h2>Generated Skip List</h2>
+            <p id="generated-skiplist-status" class="form-group">
+              A skip list is saved automatically with each video scan, even if you do not export it.
+            </p>
+            <pre id="generated-skiplist-preview" class="form-group" style="display:none; white-space:pre-wrap; font-family:monospace; font-size:12px; background:#111; color:#0f0; padding:8px; border-radius:4px; max-height:200px; overflow:auto;"></pre>
+            <div class="form-group">
+              <label for="generated-skip-threshold">Include ratings at or above (1-10):</label>
+              <input type="number" id="generated-skip-threshold" class="input-number" min="1" max="10" value="6">
+            </div>
+            <div class="form-group">
+              <label for="skip-action-map">Optional action mapping (same format as CLI --skip-actions):</label>
+              <input type="text" id="skip-action-map" class="input-text" placeholder="10=blackout+mute,7=blur,subtitle=mute">
+            </div>
+            <button id="btn-export-generated-skiplist" class="btn btn-secondary" disabled>Export Generated .skp...</button>
+          </div>
+        </section>
+
+        <!-- Advanced settings and image tooling -->
+        <section id="tab-debug" class="tab-panel hidden" role="tabpanel">
+          <div class="card">
+            <h2>Hosted Webservice (optional)</h2>
+            <p class="form-group">When enabled, the selected media file is uploaded after the local scan. The webservice performs and stores a separate scan; this sends the media, not just your local result. Temporary uploads are deleted, but the service retains its hash, rating, and scan metadata.</p>
+            <label class="checkbox-label">
+              <input type="checkbox" id="submit-to-webservice">
+              Submit media for hosted scan after local scan
+            </label>
+            <div class="form-group">
+              <label for="webservice-url">Webservice base URL:</label>
+              <input type="url" id="webservice-url" class="input-text" placeholder="https://your-webservice.example">
+            </div>
+          </div>
+          <div class="card">
+            <h2>Dev: Scan Local Image</h2>
+            <div class="form-group">
+              <label>Image File:</label>
+              <div class="input-row">
+                <input type="text" id="dev-image-path" class="input-text" placeholder="Select image to scan..." readonly>
+                <button id="btn-browse-dev-image" class="btn btn-secondary">Browse</button>
+                <input type="file" id="file-input-dev-image" accept="image/*" style="display:none">
+              </div>
+            </div>
+            <div style="margin-top:.5rem;">
+              <button id="btn-scan-dev-image" class="btn btn-secondary btn-sm">Scan Image</button>
+            </div>
+            <div id="dev-image-result" style="margin-top:.5rem;font-family:monospace;font-size:.8rem;color:#ccc;"></div>
+          </div>
+        </section>
+
+        <!-- Samples Tab -->
+        <section id="tab-samples" class="tab-panel hidden" role="tabpanel">
+          <div class="card">
+            <h2>Sample Frames</h2>
+            <div class="card-header">
+              <span id="sample-count">0 samples</span>
+              <button id="btn-reload-samples" class="btn btn-secondary btn-sm">Reload</button>
+            </div>
+            <div id="sample-grid" class="sample-grid">
+              <div class="sample-empty">No samples loaded. Scan a video or open a project.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="sidebar-log">
+        <div class="log-header">
+          <h3>Log</h3>
+          <button id="btn-clear-log" class="btn btn-secondary btn-sm">Clear</button>
+        </div>
+        <div id="log-output" class="log-output"></div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <div class="status-bar">
+        <span id="status-ready">Ready</span>
+        <span class="spacer"></span>
+        <span id="version">v0.1.0</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Sample Modal -->
+  <div id="sample-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Sample Preview</h3>
+        <button class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-image-wrapper">
+          <img id="modal-img" src="" alt="Sample">
+        </div>
+        <div class="modal-info" id="modal-info"></div>
+        <div class="modal-actions">
+          <button id="modal-rescan-frame" class="btn btn-secondary">Rescan Frame</button>
+          <button id="modal-show-original" class="btn btn-warning hidden">Show Original (Explicit Warning)</button>
+          <button class="btn btn-secondary modal-close-btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/capabilities.json",
+  "identifier": "main",
+  "description": "Permissions required by the main scanner window.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:event:allow-listen",
+    "dialog:allow-confirm",
+    "dialog:allow-open",
+    "dialog:allow-save"
+  ]
+}

@@ -1,0 +1,1 @@
+{"main":{"identifier":"main","description":"Permissions required by the main scanner window.","local":true,"windows":["main"],"permissions":["core:default","core:event:allow-listen","dialog:allow-confirm","dialog:allow-open","dialog:allow-save"]}}
